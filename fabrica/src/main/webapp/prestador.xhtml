@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://www.ambientinformatica.com.br/jsf2"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="corpo" id="corpo">
+
+		<p:panel header="Cadastro de Prestadores" id="panel">
+			<h:panelGrid columns="4">
+
+				<h:outputText value="Nome"></h:outputText>
+				<p:inputText StyleClass ="obrigatorio!" value="#{PrestadorControl.prestador.nome }">
+				</p:inputText>			
+
+				<h:outputText value="Data De Nascimento"></h:outputText>
+				<p:calendar></p:calendar>
+
+				<h:outputText value="Identidade"></h:outputText>
+				<p:inputMask value="#{PrestadorControl.prestador.identidade }"
+					mask="99999999" maxlength="8"></p:inputMask>
+
+				<h:outputText value="Telefone"></h:outputText>
+				<p:inputMask value="#{PrestadorControl.prestador.telefone }"
+					mask="(99) 9999-9999"></p:inputMask>
+
+				<h:outputText value="Endereco"></h:outputText>
+				<p:inputText value="#{PrestadorControl.prestador.endereco }"
+					maxlength="40"></p:inputText>
+
+				<h:outputText value="Banco"></h:outputText>
+				<p:inputMask value="#{PrestadorControl.prestador.banco }"
+					mask="99999" maxlength="5"></p:inputMask>
+
+				<h:outputText value="Agencia"></h:outputText>
+				<p:inputMask value="#{PrestadorControl.prestador.agencia }"
+					mask="99999" maxlength="5"></p:inputMask>
+
+				<h:outputText value="Conta"></h:outputText>
+				<p:inputMask value="#{PrestadorControl.prestador.conta }"
+					mask="99999" maxlength="6"></p:inputMask>
+
+				<h:selectOneRadio value="#{beanCPFCNPJ.opcao}">
+					<f:selectItem itemLabel="CPF" itemValue="CPF" />
+					<f:selectItem itemLabel="CNPJ" itemValue="CNPJ" />
+					<p:ajax process="@this" update="resultado" />
+				</h:selectOneRadio>
+
+				<p:outputPanel id="resultado">
+					<p:inputMask StyleClass ="obrigatorio!" id="campoCPF" mask="999.999.999-99"
+						value="#{PrestadorControl.prestador.cpf}"
+						rendered="#{beanCPFCNPJ.CPF}" />
+
+					<p:inputMask StyleClass ="obrigatorio!" id="campoCNJP" mask="99.999.999/9999-99"
+						value="#{PrestadorControl.prestador.cnpj}"
+						rendered="#{beanCPFCNPJ.CNPJ}" />
+				</p:outputPanel>
+
+
+				<h:outputText value="Email"></h:outputText>
+				<p:inputText value="#{PrestadorControl.prestador.email }"
+					maxlength="30"></p:inputText>
+
+				<p:outputLabel for="listaTipos" value="Tipo de Prestador" />
+				<p:selectOneMenu id="listaTipos" autoUpdate="true"
+					value="#{PrestadorControl.prestador.tipoDePrestador}"
+					converter="objectConverter" ajax="false" required="false">
+					<f:selectItem itemLabel="Selecione" itemValue="" />
+					<f:selectItems value="#{PrestadorControl.tiposPrestadores}"
+						var="tpprest" itemLabel="#{tpprest.descricao}" />
+				</p:selectOneMenu>
+
+
+				<p:commandButton actionListener="#{PrestadorControl.novo }"
+					value="Novo" update="prestadores, panel">
+				</p:commandButton>
+
+				<p:commandButton actionListener="#{PrestadorControl.confirmar }"
+					value="Confirmar" update="prestadores, panel">
+				</p:commandButton>
+
+				<p:commandButton action="index.xhtml" value="Voltar">
+				</p:commandButton>
+			</h:panelGrid>
+		</p:panel>
+
+		<p:dataTable id="prestadores" value="#{PrestadorControl.prestadores }"
+			var="prestador" width="100%" emptyMessage=":(">
+			<f:facet name="header">
+				<h:outputText value="Prestadores Cadastrados"></h:outputText>
+			</f:facet>
+			<p:column sortBy="#{prestador.id }">
+				<f:facet name="header">
+					<h:outputText value="Codigo"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{prestador.id }"></h:outputText>
+			</p:column>
+			<p:column sortBy="#{prestador.nome }">
+				<f:facet name="header">
+					<h:outputText value="Nome"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{prestador.nome }"></h:outputText>
+			</p:column>
+			<p:column sortBy="#{prestador.cnpj }">
+				<f:facet name="header">
+					<h:outputText value="Cnpj"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{prestador.cnpj }"></h:outputText>
+			</p:column>
+			<p:column sortBy="#{prestador.cpf }">
+				<f:facet name="header">
+					<h:outputText value="Cpf"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{prestador.cpf }"></h:outputText>
+			</p:column>
+			<p:column sortBy="#{clie.identidade }">
+				<f:facet name="header">
+					<h:outputText value="Identidade"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{prestador.identidade }"></h:outputText>
+			</p:column>
+			<p:column sortBy="#{prestador.telefone }">
+				<f:facet name="header">
+					<h:outputText value="Telefone"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{prestador.telefone }"></h:outputText>
+			</p:column>
+			<p:column headerText="" style="width:35px;">
+				<p:commandButton icon="ui-icon-pencil" title="Editar"
+					actionListener="#{PrestadorControl.editar(prestador)}"
+					update="formCorpo:panel">
+				</p:commandButton>
+			</p:column>
+
+			<p:column headerText="" style="width:35px;">
+				<p:commandButton icon="ui-icon-trash" title="Remover"
+					actionListener="#{PrestadorControl.excluir(prestador.id)}"
+					update="prestadores">
+				</p:commandButton>
+			</p:column>
+		</p:dataTable>
+
+	</ui:define>
+</ui:composition>
